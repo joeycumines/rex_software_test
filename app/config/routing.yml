@@ -3,9 +3,14 @@ rex_software_test_api:
     type:     rest
     prefix:   /api
 
+swagger_ui_redirect:
+  resource: "@RexSoftwareTestApiBundle/Controller/SwaggerUiRedirectController.php"
+  type: annotation
+  prefix: /
+
 NelmioApiDocBundle: # enables the api nelmio doc
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
-    prefix:   /api/nelmio
+    prefix:   /api/doc
 
 fos_oauth_server_token: # enables the oauth server
     resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"

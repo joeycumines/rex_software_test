@@ -16,15 +16,15 @@
     "application/json"
   ],
   "paths": {
-    "/pet": {
+    "/oauth/v2/token": {
       "post": {
-        "summary": "Add a new pet to the store",
+        "summary": "Authenticate via username and password.",
         "description": "",
         "parameters": [
           {
             "in": "body",
             "name": "credentials",
-            "description": "Pet object that needs to be added to the store",
+            "description":"{ \"grant_type\": \"password\",\r\n \"client_id\": \"1_3bcbxd9e24g0gk4swg0kwgcwg4o8k8g4g888kwc44gcc0gwwk4\",\r\n \"client_secret\": \"4ok2x70rlfokc8g0wws8c8kwcokw80k44sg48goc0ok4w0so0k\",\r\n \"username\": \"admin\",\r\n \"password\": \"today123\"}\r\n",
             "required": true,
             "schema": {
               "$ref": "#/definitions/OAuthCredentials"
@@ -32,8 +32,11 @@
           }
         ],
         "responses": {
-          "405": {
-            "description": "Invalid input"
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -51,7 +54,6 @@
       ],
       "properties": {
         "grant_type": {
-          "description": "Use the string \"password\".",
           "type": "string"
         },
         "client_id": {

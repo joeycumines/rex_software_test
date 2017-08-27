@@ -30,7 +30,8 @@ security:
             anonymous: true
 
         main:
-            anonymous: ~
+            pattern: ^/
+            anonymous: true
 
     access_control:
       - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }

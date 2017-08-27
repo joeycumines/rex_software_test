@@ -13,3 +13,17 @@ services:
         # this means you cannot fetch services directly from the container via $container->get()
         # if you need to do this, you can override this setting on individual services
         public: false
+
+    # makes classes in src/RexSoftwareTest/ApiBundle available to be used as services
+    RexSoftwareTest\ApiBundle\:
+            resource: '../../src/RexSoftwareTest/ApiBundle/*'
+            # you can exclude directories or files
+            # but if a service is unused, it's removed anyway
+            exclude: '../../src/RexSoftwareTest/ApiBundle/{Entity,Repository,Tests}'
+
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    RexSoftwareTest\ApiBundle\Controller\:
+        resource: '../../src/RexSoftwareTest/ApiBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
