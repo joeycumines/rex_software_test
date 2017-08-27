@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table("oauth2_auth_codes")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="RexSoftwareTest\ApiBundle\Repository\AuthCodeRepository")
  */
 class AuthCode extends BaseAuthCode
 {

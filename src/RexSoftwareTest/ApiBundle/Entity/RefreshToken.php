@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table("oauth2_refresh_tokens")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="RexSoftwareTest\ApiBundle\Repository\RefreshTokenRepository")
  */
 class RefreshToken extends BaseRefreshToken
 {

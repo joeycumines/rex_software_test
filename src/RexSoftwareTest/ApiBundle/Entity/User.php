@@ -9,16 +9,16 @@ use FOS\UserBundle\Model\User as BaseUser;
  * A user of the api.
  *
  * @ORM\Table("users")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="RexSoftwareTest\ApiBundle\Repository\UserRepository")
  */
 class User extends BaseUser
 {
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(name="id",type="integer",nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @var integer
      */
     protected $id;
 

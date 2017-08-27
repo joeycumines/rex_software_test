@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table("oauth2_clients")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="RexSoftwareTest\ApiBundle\Repository\ClientRepository")
  */
 class Client extends BaseClient
 {

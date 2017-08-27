@@ -4,7 +4,6 @@ namespace RexSoftwareTest\ApiBundle\Controller;
 
 
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use RexSoftwareTest\ApiBundle\Exception\EnvironmentException;
@@ -23,7 +22,7 @@ class SwaggerController extends FOSRestController
      *  section="Swagger"
      * )
      *
-     * @Rest\Get("/")
+     * @Rest\Get("")
      *
      * @return JsonResponse
      */

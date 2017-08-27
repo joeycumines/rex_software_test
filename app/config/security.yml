@@ -34,6 +34,9 @@ security:
             anonymous: true
 
     access_control:
-      - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }
-      - { path: ^/api/nelmio, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/api$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/api/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
       - { path: ^/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY } # ROLE_USER
+      - { path: ^/, role: IS_AUTHENTICATED_ANONYMOUSLY } # ROLE_NO_ACCESS

@@ -32,6 +32,6 @@ class SwaggerUiRedirectController extends Controller
             $url['host'],
             80 !== $url['port'] ? ':' . $url['port'] : ''
         );
-        return new RedirectResponse(sprintf('%s/swagger-ui/index.html?url=%s/api/', $url, $url));
+        return new RedirectResponse(sprintf('%s/swagger-ui/index.html?url=%s/api', $url, $url));
     }
 }

@@ -2,3 +2,9 @@ swagger:
     type: rest
     resource: "@RexSoftwareTestApiBundle/Controller/SwaggerController.php"
     name_prefix: swagger_
+
+movie:
+  type: rest
+  resource: "@RexSoftwareTestApiBundle/Controller/MovieController.php"
+  name_prefix: movie_
+  prefix:   /movie

@@ -76,6 +76,8 @@ fos_rest:
     routing_loader:
         default_format: json
         include_format: false
+    serializer:
+        serialize_null: true
 
 fos_user:
     db_driver: orm

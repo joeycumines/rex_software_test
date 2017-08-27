@@ -27,3 +27,39 @@ services:
         resource: '../../src/RexSoftwareTest/ApiBundle/Controller'
         public: true
         tags: ['controller.service_arguments']
+
+    repository.access_token:
+        class: RexSoftwareTest\ApiBundle\Repository\AccessTokenRepository
+        factory: ["@doctrine.orm.default_entity_manager", getRepository]
+        arguments:
+          - RexSoftwareTest\ApiBundle\Entity\AccessToken
+
+    repository.auth_code:
+        class: RexSoftwareTest\ApiBundle\Repository\AuthCodeRepository
+        factory: ["@doctrine.orm.default_entity_manager", getRepository]
+        arguments:
+          - RexSoftwareTest\ApiBundle\Entity\AuthCode
+
+    repository.client:
+        class: RexSoftwareTest\ApiBundle\Repository\ClientRepository
+        factory: ["@doctrine.orm.default_entity_manager", getRepository]
+        arguments:
+          - RexSoftwareTest\ApiBundle\Entity\Client
+
+    repository.refresh_token:
+        class: RexSoftwareTest\ApiBundle\Repository\RefreshTokenRepository
+        factory: ["@doctrine.orm.default_entity_manager", getRepository]
+        arguments:
+          - RexSoftwareTest\ApiBundle\Entity\RefreshToken
+
+    repository.user:
+        class: RexSoftwareTest\ApiBundle\Repository\UserRepository
+        factory: ["@doctrine.orm.default_entity_manager", getRepository]
+        arguments:
+          - RexSoftwareTest\ApiBundle\Entity\User
+
+    repository.movie:
+            class: RexSoftwareTest\ApiBundle\Repository\MovieRepository
+            factory: ["@doctrine.orm.default_entity_manager", getRepository]
+            arguments:
+              - RexSoftwareTest\ApiBundle\Entity\Movie
