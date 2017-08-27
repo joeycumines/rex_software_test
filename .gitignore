@@ -21,3 +21,6 @@
 *.iml
 out
 gen
+
+# swagger docs gen folder
+swagger-docs

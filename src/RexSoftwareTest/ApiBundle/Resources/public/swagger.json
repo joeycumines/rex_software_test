@@ -24,7 +24,7 @@
           {
             "in": "body",
             "name": "credentials",
-            "description":"{ \"grant_type\": \"password\",\r\n \"client_id\": \"1_3bcbxd9e24g0gk4swg0kwgcwg4o8k8g4g888kwc44gcc0gwwk4\",\r\n \"client_secret\": \"4ok2x70rlfokc8g0wws8c8kwcokw80k44sg48goc0ok4w0so0k\",\r\n \"username\": \"admin\",\r\n \"password\": \"today123\"}\r\n",
+            "description": "{ \"grant_type\": \"password\",\r\n \"client_id\": \"1_3bcbxd9e24g0gk4swg0kwgcwg4o8k8g4g888kwc44gcc0gwwk4\",\r\n \"client_secret\": \"4ok2x70rlfokc8g0wws8c8kwcokw80k44sg48goc0ok4w0so0k\",\r\n \"username\": \"admin\",\r\n \"password\": \"today123\"}\r\n",
             "required": true,
             "schema": {
               "$ref": "#/definitions/OAuthCredentials"
@@ -39,6 +39,49 @@
             "description": "Unauthorized"
           }
         }
+      }
+    },
+    "/api/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "",
+        "tags": [
+          "Swagger"
+        ],
+        "summary": "Get the swagger doc for the API.",
+        "operationId": "get_api",
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/movie": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "All movies that meet the conditions are returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie[]"
+            }
+          }
+        },
+        "description": "",
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Get all movies that optionally meet certain conditions.",
+        "operationId": "get_api-movie",
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
       }
     }
   },
@@ -69,6 +112,51 @@
           "type": "string"
         }
       }
+    },
+    "RexSoftwareTest.ApiBundle.Entity.Movie": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string",
+          "description": "The title of the movie, non nullable."
+        },
+        "description": {
+          "type": "string",
+          "description": "The movie's description, this field is nullable."
+        },
+        "image": {
+          "type": "string",
+          "description": "A unique identifier for the movie's image (poster, etc)."
+        },
+        "rating": {
+          "type": "number",
+          "description": "The movie's current rating / 10, updated with each rating to avoid excessive re-calculation.",
+          "format": "float"
+        }
+      },
+      "type": "object"
+    },
+    "RexSoftwareTest.ApiBundle.Entity.Movie[]": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
+      }
     }
-  }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
+    }
+  },
+  "tags": [
+    {
+      "name": ""
+    }
+  ]
 }
