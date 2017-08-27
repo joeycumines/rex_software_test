@@ -1,0 +1,11 @@
+rex_software_test_api:
+    resource: "@RexSoftwareTestApiBundle/Resources/config/routing.yml"
+    type:     rest
+    prefix:   /api
+
+NelmioApiDocBundle: # enables the api nelmio doc
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/nelmio
+
+fos_oauth_server_token: # enables the oauth server
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"

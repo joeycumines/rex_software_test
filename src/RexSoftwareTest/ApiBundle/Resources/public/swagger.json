@@ -1,0 +1,72 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the \"Movies\" api.\n",
+    "version": "1.0.0",
+    "title": "Movies API"
+  },
+  "host": "symfony.dev",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/pet": {
+      "post": {
+        "summary": "Add a new pet to the store",
+        "description": "",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "credentials",
+            "description": "Pet object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OAuthCredentials"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "OAuthCredentials": {
+      "type": "object",
+      "required": [
+        "grant_type",
+        "client_id",
+        "client_secret",
+        "username",
+        "password"
+      ],
+      "properties": {
+        "grant_type": {
+          "description": "Use the string \"password\".",
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "client_secret": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

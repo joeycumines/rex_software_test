@@ -1,0 +1,4 @@
+swagger:
+    type: rest
+    resource: "@RexSoftwareTestApiBundle/Controller/SwaggerController.php"
+    name_prefix: swagger_
