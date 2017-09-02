@@ -36,3 +36,9 @@ you should be redirected straight to a [swagger-ui](https://github.com/swagger-a
 which is based on a semi-automatically generated _Swagger 2.0_ file (the code for that not part of
 this branch). There is also the [NelmioApiDocBundle](https://github.com/nelmio/NelmioApiDocBundle),
 which is available on [symfony.dev/api/doc](http://symfony.dev/api/doc).
+
+### Auth
+
+Authentication with the api can be performed via the oauth endpoint, as detailed in the swagger doc.
+The `Authorization` header needs to be set with the returned `access_token` in the format
+`Bearer <access_token>`, this can be done via the swagger ui, which can also be used to test the api.
