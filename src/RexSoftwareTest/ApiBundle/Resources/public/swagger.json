@@ -139,6 +139,13 @@
           "type": "number",
           "description": "The movie's current rating / 10, updated with each rating to avoid excessive re-calculation, it starts at 6.",
           "format": "float"
+        },
+        "role_ids": {
+          "type": "array",
+          "description": "The ids of the roles that are in the movie.",
+          "items": {
+            "type": "integer"
+          }
         }
       },
       "type": "object"
