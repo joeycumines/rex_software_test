@@ -59,7 +59,13 @@ services:
           - RexSoftwareTest\ApiBundle\Entity\User
 
     repository.movie:
-            class: RexSoftwareTest\ApiBundle\Repository\MovieRepository
-            factory: ["@doctrine.orm.default_entity_manager", getRepository]
-            arguments:
-              - RexSoftwareTest\ApiBundle\Entity\Movie
+        class: RexSoftwareTest\ApiBundle\Repository\MovieRepository
+        factory: ["@doctrine.orm.default_entity_manager", getRepository]
+        arguments:
+          - RexSoftwareTest\ApiBundle\Entity\Movie
+
+    repository.actor:
+        class: RexSoftwareTest\ApiBundle\Repository\ActorRepository
+        factory: ["@doctrine.orm.default_entity_manager", getRepository]
+        arguments:
+          - RexSoftwareTest\ApiBundle\Entity\Actor

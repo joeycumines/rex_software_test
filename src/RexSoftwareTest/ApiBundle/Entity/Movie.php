@@ -14,12 +14,14 @@ use JMS\Serializer\Annotation as JMS;
  */
 class Movie
 {
+    const INITIAL_RATING = 6.0;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer",name="id",nullable=false)
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @JMS\Groups({"movie", "test"})
+     * @JMS\Groups({"movie"})
      *
      * @var int
      */
@@ -48,7 +50,7 @@ class Movie
     protected $description;
 
     /**
-     * A unique identifier for the movie's image (poster, etc).
+     * A unique identifier for the movie's image (poster, etc), this field is nullable.
      *
      * @ORM\Column(name="image",type="string",nullable=true)
      *
@@ -59,7 +61,7 @@ class Movie
     protected $image;
 
     /**
-     * The movie's current rating / 10, updated with each rating to avoid excessive re-calculation.
+     * The movie's current rating / 10, updated with each rating to avoid excessive re-calculation, it starts at 6.
      *
      * @ORM\Column(type="decimal",precision=4,scale=2,nullable=false)
      *
@@ -67,7 +69,7 @@ class Movie
      *
      * @var float
      */
-    protected $rating;
+    protected $rating = self::INITIAL_RATING;
 
     /**
      * @return int
