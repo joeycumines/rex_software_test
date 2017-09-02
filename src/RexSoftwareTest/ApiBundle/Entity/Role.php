@@ -9,7 +9,7 @@ use JMS\Serializer\Annotation as JMS;
 /**
  * A role of an actor in a movie.
  *
- * @ORM\Table("role")
+ * @ORM\Table("roles")
  * @ORM\Entity(repositoryClass="RexSoftwareTest\ApiBundle\Repository\RoleRepository")
  */
 class Role
