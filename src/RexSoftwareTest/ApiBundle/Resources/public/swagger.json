@@ -20,6 +20,9 @@
       "post": {
         "summary": "Authenticate via username and password.",
         "description": "",
+        "tags": [
+          "Auth"
+        ],
         "parameters": [
           {
             "in": "body",
@@ -130,11 +133,11 @@
         },
         "image": {
           "type": "string",
-          "description": "A unique identifier for the movie's image (poster, etc)."
+          "description": "A unique identifier for the movie's image (poster, etc), this field is nullable."
         },
         "rating": {
           "type": "number",
-          "description": "The movie's current rating / 10, updated with each rating to avoid excessive re-calculation.",
+          "description": "The movie's current rating / 10, updated with each rating to avoid excessive re-calculation, it starts at 6.",
           "format": "float"
         }
       },
