@@ -87,6 +87,27 @@ class Movie
     }
 
     /**
+     * The ids of the roles that are in the movie.
+     *
+     * @JMS\VirtualProperty
+     * @JMS\SerializedName("role_ids")
+     * @JMS\Groups({"movie"})
+     *
+     * @return int[]
+     */
+    public function getRoleIds(): array
+    {
+        $roles = [];
+        foreach ($this->roles as $role) {
+            if (!$role instanceof Role || false === is_int($role->getId())) {
+                continue;
+            }
+            $roles[] = $role->getId();
+        }
+        return $roles;
+    }
+
+    /**
      * @return int
      */
     public function getId()
