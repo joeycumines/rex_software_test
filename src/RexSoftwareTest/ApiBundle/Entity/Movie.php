@@ -81,18 +81,24 @@ class Movie
      */
     protected $roles;
 
+    /**
+     * The ids of the roles that are in the movie.
+     *
+     * @JMS\Type("array<integer>")
+     * @JMS\Accessor(getter="getRoleIds")
+     * @JMS\SerializedName("role_ids")
+     * @JMS\Groups({"movie"})
+     *
+     * @var int[]
+     */
+    protected $roleIds = [];
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
     }
 
     /**
-     * The ids of the roles that are in the movie.
-     *
-     * @JMS\VirtualProperty
-     * @JMS\SerializedName("role_ids")
-     * @JMS\Groups({"movie"})
-     *
      * @return int[]
      */
     public function getRoleIds(): array

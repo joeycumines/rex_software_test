@@ -80,18 +80,24 @@ class Actor
      */
     protected $roles;
 
+    /**
+     * The ids of the roles that this actor has played.
+     *
+     * @JMS\Type("array<integer>")
+     * @JMS\Accessor(getter="getRoleIds")
+     * @JMS\SerializedName("role_ids")
+     * @JMS\Groups({"actor"})
+     *
+     * @var int[]
+     */
+    protected $roleIds = [];
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
     }
 
     /**
-     * The ids of the roles that this actor has played.
-     *
-     * @JMS\VirtualProperty
-     * @JMS\SerializedName("role_ids")
-     * @JMS\Groups({"actor"})
-     *
      * @return int[]
      */
     public function getRoleIds(): array

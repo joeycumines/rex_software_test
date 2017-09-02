@@ -36,6 +36,18 @@ class Role
     protected $movie;
 
     /**
+     * The id of the movie of which this role is for.
+     *
+     * @JMS\Type("integer")
+     * @JMS\Accessor(getter="getMovieId")
+     * @JMS\SerializedName("movie_id")
+     * @JMS\Groups({"role"})
+     *
+     * @var int
+     */
+    protected $movieId;
+
+    /**
      * The actor who played this role.
      *
      * @ORM\ManyToOne(targetEntity="Actor",inversedBy="roles")
@@ -44,6 +56,18 @@ class Role
      * @var Actor
      */
     protected $actor;
+
+    /**
+     * The id of the actor who played this role.
+     *
+     * @JMS\Type("integer")
+     * @JMS\Accessor(getter="getActorId")
+     * @JMS\SerializedName("actor_id")
+     * @JMS\Groups({"role"})
+     *
+     * @var int
+     */
+    protected $actorId;
 
     /**
      * The name of the character / role.
@@ -57,12 +81,6 @@ class Role
     protected $name;
 
     /**
-     * The id of the movie of which this role is for.
-     *
-     * @JMS\VirtualProperty
-     * @JMS\SerializedName("movie_id")
-     * @JMS\Groups({"role"})
-     *
      * @return int
      */
     public function getMovieId()
@@ -74,12 +92,6 @@ class Role
     }
 
     /**
-     * The id of the actor who played this role.
-     *
-     * @JMS\VirtualProperty
-     * @JMS\SerializedName("actor_id")
-     * @JMS\Groups({"role"})
-     *
      * @return int
      */
     public function getActorId()
