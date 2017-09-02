@@ -3,6 +3,7 @@
 namespace RexSoftwareTest\ApiBundle\Entity;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 
@@ -70,6 +71,20 @@ class Movie
      * @var float
      */
     protected $rating = self::INITIAL_RATING;
+
+    /**
+     * The roles in this movie.
+     *
+     * @ORM\OneToMany(targetEntity="Role", mappedBy="movie")
+     *
+     * @var ArrayCollection
+     */
+    protected $roles;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -163,6 +178,25 @@ class Movie
     public function setRating(float $rating): Movie
     {
         $this->rating = $rating;
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param ArrayCollection $roles
+     *
+     * @return Movie
+     */
+    public function setRoles(ArrayCollection $roles)
+    {
+        $this->roles = $roles;
         return $this;
     }
 }

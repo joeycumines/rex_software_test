@@ -3,6 +3,7 @@
 namespace RexSoftwareTest\ApiBundle\Entity;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 
@@ -24,6 +25,17 @@ class Actor
      * @var int
      */
     protected $id;
+
+    /**
+     * The name of the actor.
+     *
+     * @ORM\Column(name="name",type="string",nullable=false,length=512)
+     *
+     * @JMS\Groups({"actor"})
+     *
+     * @var string
+     */
+    protected $name;
 
     /**
      * The date the actor was born (datetime at the 00:00), this field is nullable.
@@ -60,17 +72,36 @@ class Actor
     protected $image;
 
     /**
+     * The roles this actor has played.
+     *
+     * @ORM\OneToMany(targetEntity="Role", mappedBy="actor")
+     *
+     * @var ArrayCollection
+     */
+    protected $roles;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
+
+    /**
      * The age of the actor.
      *
      * @JMS\VirtualProperty
      * @JMS\SerializedName("age")
      * @JMS\Groups({"actor"})
      *
-     * @var int|null
+     * @return int|null
      */
     public function getAge()
     {
-        $birthDate = null;
+        $birthDate = $this->birthDate;
+        if (!$birthDate instanceof \DateTimeInterface) {
+            return null;
+        }
+        $birthDate = (new \DateTime())->setTimestamp($birthDate->getTimestamp())->setTime(0, 0);
+        return $birthDate->diff(new \DateTime())->y;
     }
 
     /**
@@ -107,6 +138,9 @@ class Actor
      */
     public function setBirthDate($birthDate)
     {
+        if ($birthDate instanceof \DateTimeInterface && new \DateTime() < $birthDate) {
+            throw new \InvalidArgumentException('$birthDate must not be a future date');
+        }
         $this->birthDate = $birthDate;
         return $this;
     }
@@ -146,6 +180,44 @@ class Actor
     public function setImage($image)
     {
         $this->image = $image;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return Actor
+     */
+    public function setName(string $name): Actor
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param ArrayCollection $roles
+     *
+     * @return Actor
+     */
+    public function setRoles(ArrayCollection $roles): Actor
+    {
+        $this->roles = $roles;
         return $this;
     }
 }
