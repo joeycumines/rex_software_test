@@ -29,7 +29,7 @@ class MovieController extends FOSRestController
      *      "200"="All movies that meet the conditions are returned."
      *  },
      *  responseMap={
-     *      "200"="array<RexSoftwareTest\ApiBundle\Entity\Movie>"
+     *      "200"={"class"="array<RexSoftwareTest\ApiBundle\Entity\Movie>", "groups"={"movie"}}
      *  },
      *  section="Movie"
      * )

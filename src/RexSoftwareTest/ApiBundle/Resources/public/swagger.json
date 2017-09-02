@@ -139,69 +139,6 @@
           "type": "number",
           "description": "The movie's current rating / 10, updated with each rating to avoid excessive re-calculation, it starts at 6.",
           "format": "float"
-        },
-        "roles": {
-          "type": "array",
-          "description": "The roles in this movie.",
-          "items": {
-            "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Role"
-          }
-        }
-      },
-      "type": "object"
-    },
-    "RexSoftwareTest.ApiBundle.Entity.Actor": {
-      "description": "The actor who played this role.",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "description": "integer",
-          "format": "int32"
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the actor."
-        },
-        "birth_date": {
-          "type": "string",
-          "description": "The date the actor was born (datetime at the 00:00), this field is nullable.",
-          "format": "date-time"
-        },
-        "bio": {
-          "type": "string",
-          "description": "A short bio for the actor, this field is nullable."
-        },
-        "image": {
-          "type": "string",
-          "description": "A unique identifier for the actor's portrait, this field is nullable."
-        },
-        "roles": {
-          "type": "array",
-          "description": "The roles this actor has played.",
-          "items": {
-            "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Role"
-          }
-        }
-      },
-      "type": "object"
-    },
-    "RexSoftwareTest.ApiBundle.Entity.Role": {
-      "description": "The roles in this movie.",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "description": "integer",
-          "format": "int32"
-        },
-        "movie": {
-          "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
-        },
-        "actor": {
-          "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Actor"
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the character / role."
         }
       },
       "type": "object"
