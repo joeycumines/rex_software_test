@@ -6,5 +6,5 @@ swagger:
 movie:
   type: rest
   resource: "@RexSoftwareTestApiBundle/Controller/MovieController.php"
-  name_prefix: movie_
-  prefix:   /movie
+  name_prefix: movies_
+  prefix:   /movies
