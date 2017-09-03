@@ -20,6 +20,7 @@ class Actor
      * @ORM\Column(type="integer",name="id",nullable=false)
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @JMS\Type("integer")
      * @JMS\Groups({"actor"})
      *
      * @var int
@@ -31,6 +32,7 @@ class Actor
      *
      * @ORM\Column(name="name",type="string",nullable=false,length=512)
      *
+     * @JMS\Type("string")
      * @JMS\Groups({"actor"})
      *
      * @var string
@@ -42,6 +44,7 @@ class Actor
      *
      * @ORM\Column(name="birth_date",type="datetime",nullable=true)
      *
+     * @JMS\Type("DateTime")
      * @JMS\Groups({"actor"})
      * @JMS\SerializedName("birth_date")
      *
@@ -50,10 +53,23 @@ class Actor
     protected $birthDate;
 
     /**
+     * The age of the actor, this field is effectively virtual and only present for serialization purposes, and is
+     * calculated via date.
+     *
+     * @JMS\Accessor(getter="getAge")
+     * @JMS\Type("integer")
+     * @JMS\Groups({"actor"})
+     *
+     * @var int|null
+     */
+    protected $age;
+
+    /**
      * A short bio for the actor, this field is nullable.
      *
      * @ORM\Column(name="bio",type="string",nullable=true)
      *
+     * @JMS\Type("string")
      * @JMS\Groups({"actor"})
      *
      * @var string|null
@@ -65,6 +81,7 @@ class Actor
      *
      * @ORM\Column(name="image",type="string",nullable=true)
      *
+     * @JMS\Type("string")
      * @JMS\Groups({"actor"})
      *
      * @var string|null
@@ -84,7 +101,7 @@ class Actor
      * The ids of the roles that this actor has played.
      *
      * @JMS\Type("array<integer>")
-     * @JMS\Accessor(getter="getRoleIds")
+     * @JMS\Accessor(getter="serializeRoleIds")
      * @JMS\SerializedName("role_ids")
      * @JMS\Groups({"actor"})
      *
@@ -95,40 +112,6 @@ class Actor
     public function __construct()
     {
         $this->roles = new ArrayCollection();
-    }
-
-    /**
-     * @return int[]
-     */
-    public function getRoleIds(): array
-    {
-        $roles = [];
-        foreach ($this->roles as $role) {
-            if (!$role instanceof Role || false === is_int($role->getId())) {
-                continue;
-            }
-            $roles[] = $role->getId();
-        }
-        return $roles;
-    }
-
-    /**
-     * The age of the actor.
-     *
-     * @JMS\VirtualProperty
-     * @JMS\SerializedName("age")
-     * @JMS\Groups({"actor"})
-     *
-     * @return int|null
-     */
-    public function getAge()
-    {
-        $birthDate = $this->birthDate;
-        if (!$birthDate instanceof \DateTimeInterface) {
-            return null;
-        }
-        $birthDate = (new \DateTime())->setTimestamp($birthDate->getTimestamp())->setTime(0, 0);
-        return $birthDate->diff(new \DateTime())->y;
     }
 
     /**
@@ -246,5 +229,56 @@ class Actor
     {
         $this->roles = $roles;
         return $this;
+    }
+
+    /**
+     * Convert the actor's birth date to an age value (years).
+     *
+     * @return int|null
+     */
+    public function getAge()
+    {
+        $birthDate = $this->birthDate;
+        if (!$birthDate instanceof \DateTimeInterface) {
+            return null;
+        }
+        $birthDate = (new \DateTime())->setTimestamp($birthDate->getTimestamp())->setTime(0, 0);
+        return $birthDate->diff(new \DateTime())->y;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getRoleIds(): array
+    {
+        return $this->roleIds;
+    }
+
+    /**
+     * @param int[] $roleIds
+     *
+     * @return Actor
+     */
+    public function setRoleIds(array $roleIds): Actor
+    {
+        $this->roleIds = $roleIds;
+        return $this;
+    }
+
+    /**
+     * Converts the array collection of roles into an array of int ids.
+     *
+     * @return int[]
+     */
+    public function serializeRoleIds(): array
+    {
+        $roles = [];
+        foreach ($this->roles as $role) {
+            if (!$role instanceof Role || false === is_int($role->getId())) {
+                continue;
+            }
+            $roles[] = $role->getId();
+        }
+        return $roles;
     }
 }
