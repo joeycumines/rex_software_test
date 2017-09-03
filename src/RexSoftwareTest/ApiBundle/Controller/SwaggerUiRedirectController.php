@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SwaggerUiRedirectController extends Controller
 {
-    private $requestStack;
+    protected $requestStack;
 
     public function __construct(RequestStack $requestStack)
     {

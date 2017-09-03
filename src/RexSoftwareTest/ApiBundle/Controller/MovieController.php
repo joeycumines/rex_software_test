@@ -5,23 +5,31 @@ namespace RexSoftwareTest\ApiBundle\Controller;
 
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use RexSoftwareTest\ApiBundle\Entity\Movie;
+use RexSoftwareTest\ApiBundle\Form\MovieType;
 use RexSoftwareTest\ApiBundle\Repository\MovieRepository;
 use RexSoftwareTest\ApiBundle\Services\JsonFormFactory\JsonFormFactory;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 class MovieController extends FOSRestController
 {
+    protected $requestStack;
     protected $jsonFormFactory;
-
+    protected $movieType;
     protected $movieRepository;
 
-    public function __construct(JsonFormFactory $jsonFormFactory, MovieRepository $movieRepository)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        JsonFormFactory $jsonFormFactory,
+        MovieType $movieType,
+        MovieRepository $movieRepository
+    ) {
+        $this->requestStack = $requestStack;
         $this->jsonFormFactory = $jsonFormFactory;
+        $this->movieType = $movieType;
         $this->movieRepository = $movieRepository;
     }
 
@@ -84,6 +92,7 @@ class MovieController extends FOSRestController
      *
      * @ApiDoc(
      *     resource=true,
+     *     input="RexSoftwareTest\ApiBundle\Form\MovieType",
      *     statusCodes={
      *         "200"="The movie with the id provided is returned.",
      *         "400"="A bad request was made, an error message will be returned."
@@ -101,6 +110,11 @@ class MovieController extends FOSRestController
      */
     public function postMovieAction()
     {
-        return new Response();
+        $form = $this->jsonFormFactory->createForm($this->movieType);
+        $form->handleRequest($this->requestStack->getCurrentRequest());
+
+        $view = $this->view($form->getData());
+        $view->setContext((new Context())->addGroup('movie'));
+        return $this->handleView($view);
     }
 }

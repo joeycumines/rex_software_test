@@ -29,7 +29,7 @@ class JsonFormFactory
      *
      * @return FormInterface
      */
-    public function createJsonForm($type, $data = null, array $options = [], bool $checkNested = false)
+    public function createForm($type, $data = null, array $options = [], bool $checkNested = false)
     {
         // disable the csrf protection by default; we are working with API keys anyway
         $options = array_merge(
