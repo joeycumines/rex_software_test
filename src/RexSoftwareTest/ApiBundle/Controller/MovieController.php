@@ -3,12 +3,14 @@
 namespace RexSoftwareTest\ApiBundle\Controller;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use RexSoftwareTest\ApiBundle\Entity\Movie;
+use RexSoftwareTest\ApiBundle\Entity\Role;
 use RexSoftwareTest\ApiBundle\Form\MovieType;
 use RexSoftwareTest\ApiBundle\Model\HttpValidationErrorModel;
 use RexSoftwareTest\ApiBundle\Repository\MovieRepository;
@@ -36,7 +38,7 @@ class MovieController extends FOSRestController
     }
 
     /**
-     * Get all movies that optionally meet certain conditions.
+     * Get all movies.
      *
      * @ApiDoc(
      *     resource=true,
@@ -266,9 +268,17 @@ class MovieController extends FOSRestController
      */
     public function deleteMovieAction(Movie $movie)
     {
+        $clonedMovie = clone $movie;
+        foreach ($movie->getRoles() as $role) {
+            if (!$role instanceof Role) {
+                continue;
+            }
+            $role->setMovie(null);
+        }
+        $movie->setRoles(new ArrayCollection());
         $this->doctrine->getManager()->remove($movie);
         $this->doctrine->getManager()->flush();
-        $view = $this->view($movie);
+        $view = $this->view($clonedMovie);
         $view->setContext((new Context())->addGroup('movie'));
         return $this->handleView($view);
     }

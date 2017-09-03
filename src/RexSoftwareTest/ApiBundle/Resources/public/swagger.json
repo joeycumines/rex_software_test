@@ -89,7 +89,7 @@
       "post": {
         "responses": {
           "200": {
-            "description": "The movie with the id provided is returned.",
+            "description": "A new movie was created and returned.",
             "schema": {
               "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
             }
@@ -126,6 +126,41 @@
       }
     },
     "/api/movies/{movie}": {
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "The movie was deleted, and it's last value returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
+            }
+          },
+          "404": {
+            "description": "The movie was not found, an error message will be returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpErrorResponseModel"
+            }
+          }
+        },
+        "description": "",
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Delete a given movie, and return it's last value.",
+        "operationId": "delete_api-movies-movie",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "movie",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
       "get": {
         "responses": {
           "200": {
@@ -135,7 +170,7 @@
             }
           },
           "404": {
-            "description": "The movie was not found, and error message will be returned.",
+            "description": "The movie was not found, an error message will be returned.",
             "schema": {
               "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpErrorResponseModel"
             }
@@ -153,6 +188,106 @@
             "name": "movie",
             "required": true,
             "type": "string"
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "patch": {
+        "responses": {
+          "200": {
+            "description": "The movie with the given id is returned after being updated with the changes.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
+            }
+          },
+          "400": {
+            "description": "A bad request was made, any errors will be returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpValidationErrorModel"
+            }
+          },
+          "404": {
+            "description": "The movie was not found, an error message will be returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpErrorResponseModel"
+            }
+          }
+        },
+        "description": "",
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Update an existing movie, only updating the provided values.",
+        "operationId": "patch_api-movies-movie",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "movie",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "description": "",
+            "name": "rexsoftwaretest_apibundle_movie",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Form.MovieType"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "description": "The movie with the given id is returned after being updated with the changes.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
+            }
+          },
+          "400": {
+            "description": "A bad request was made, any errors will be returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpValidationErrorModel"
+            }
+          },
+          "404": {
+            "description": "The movie was not found, an error message will be returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpErrorResponseModel"
+            }
+          }
+        },
+        "description": "",
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Update an existing movie, overwriting all values.",
+        "operationId": "put_api-movies-movie",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "movie",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "description": "",
+            "name": "rexsoftwaretest_apibundle_movie",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Form.MovieType"
+            }
           }
         ],
         "security": [
