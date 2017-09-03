@@ -70,7 +70,8 @@ class MovieController extends FOSRestController
      */
     public function getMovieAction(Movie $movie)
     {
-        $view = $this->view('Could not find the movie.', Response::HTTP_NOT_FOUND);
+        $view = $this->view($movie);
+        $view->setContext((new Context())->addGroup('movie'));
         return $this->handleView($view);
     }
 }
