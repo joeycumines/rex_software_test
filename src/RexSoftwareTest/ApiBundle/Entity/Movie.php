@@ -22,6 +22,7 @@ class Movie
      * @ORM\Column(type="integer",name="id",nullable=false)
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @JMS\Type("integer")
      * @JMS\Groups({"movie"})
      *
      * @var int
@@ -33,6 +34,7 @@ class Movie
      *
      * @ORM\Column(name="name",type="string",nullable=false,length=512)
      *
+     * @JMS\Type("string")
      * @JMS\Groups({"movie"})
      *
      * @var string
@@ -44,6 +46,7 @@ class Movie
      *
      * @ORM\Column(name="description",type="string",nullable=true)
      *
+     * @JMS\Type("string")
      * @JMS\Groups({"movie"})
      *
      * @var string|null
@@ -55,6 +58,7 @@ class Movie
      *
      * @ORM\Column(name="image",type="string",nullable=true)
      *
+     * @JMS\Type("string")
      * @JMS\Groups({"movie"})
      *
      * @var string|null
@@ -66,6 +70,7 @@ class Movie
      *
      * @ORM\Column(type="decimal",precision=4,scale=2,nullable=false)
      *
+     * @JMS\Type("float")
      * @JMS\Groups({"movie"})
      *
      * @var float
@@ -85,7 +90,7 @@ class Movie
      * The ids of the roles that are in the movie.
      *
      * @JMS\Type("array<integer>")
-     * @JMS\Accessor(getter="getRoleIds")
+     * @JMS\Accessor(getter="serializeRoleIds")
      * @JMS\SerializedName("role_ids")
      * @JMS\Groups({"movie"})
      *
@@ -96,21 +101,6 @@ class Movie
     public function __construct()
     {
         $this->roles = new ArrayCollection();
-    }
-
-    /**
-     * @return int[]
-     */
-    public function getRoleIds(): array
-    {
-        $roles = [];
-        foreach ($this->roles as $role) {
-            if (!$role instanceof Role || false === is_int($role->getId())) {
-                continue;
-            }
-            $roles[] = $role->getId();
-        }
-        return $roles;
     }
 
     /**
@@ -225,5 +215,39 @@ class Movie
     {
         $this->roles = $roles;
         return $this;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getRoleIds(): array
+    {
+        return $this->roleIds;
+    }
+
+    /**
+     * @param int[] $roleIds
+     *
+     * @return Movie
+     */
+    public function setRoleIds(array $roleIds): Movie
+    {
+        $this->roleIds = $roleIds;
+        return $this;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function serializeRoleIds(): array
+    {
+        $roles = [];
+        foreach ($this->roles as $role) {
+            if (!$role instanceof Role || false === is_int($role->getId())) {
+                continue;
+            }
+            $roles[] = $role->getId();
+        }
+        return $roles;
     }
 }

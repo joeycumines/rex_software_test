@@ -19,6 +19,7 @@ class Role
      * @ORM\Column(type="integer",name="id",nullable=false)
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @JMS\Type("integer")
      * @JMS\Groups({"role"})
      *
      * @var int
@@ -74,6 +75,7 @@ class Role
      *
      * @ORM\Column(name="name",type="string",nullable=false,length=512)
      *
+     * @JMS\Type("string")
      * @JMS\Groups({"role"})
      *
      * @var string
