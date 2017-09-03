@@ -3,12 +3,14 @@
 namespace RexSoftwareTest\ApiBundle\Controller;
 
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use RexSoftwareTest\ApiBundle\Entity\Movie;
 use RexSoftwareTest\ApiBundle\Form\MovieType;
+use RexSoftwareTest\ApiBundle\Model\HttpValidationErrorModel;
 use RexSoftwareTest\ApiBundle\Repository\MovieRepository;
 use RexSoftwareTest\ApiBundle\Services\JsonFormFactory\JsonFormFactory;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -18,18 +20,18 @@ class MovieController extends FOSRestController
 {
     protected $requestStack;
     protected $jsonFormFactory;
-    protected $movieType;
+    protected $doctrine;
     protected $movieRepository;
 
     public function __construct(
         RequestStack $requestStack,
         JsonFormFactory $jsonFormFactory,
-        MovieType $movieType,
+        ManagerRegistry $doctrine,
         MovieRepository $movieRepository
     ) {
         $this->requestStack = $requestStack;
         $this->jsonFormFactory = $jsonFormFactory;
-        $this->movieType = $movieType;
+        $this->doctrine = $doctrine;
         $this->movieRepository = $movieRepository;
     }
 
@@ -95,11 +97,11 @@ class MovieController extends FOSRestController
      *     input="RexSoftwareTest\ApiBundle\Form\MovieType",
      *     statusCodes={
      *         "200"="The movie with the id provided is returned.",
-     *         "400"="A bad request was made, an error message will be returned."
+     *         "400"="A bad request was made, any errors will be returned."
      *     },
      *     responseMap={
      *         "200"={"class"="RexSoftwareTest\ApiBundle\Entity\Movie", "groups"={"movie"}},
-     *         "400"="RexSoftwareTest\ApiBundle\Model\HttpErrorResponseModel"
+     *         "400"="RexSoftwareTest\ApiBundle\Model\HttpValidationErrorModel"
      *     },
      *     section="Movie"
      * )
@@ -110,10 +112,24 @@ class MovieController extends FOSRestController
      */
     public function postMovieAction()
     {
-        $form = $this->jsonFormFactory->createForm($this->movieType);
+        $form = $this->jsonFormFactory->createForm(MovieType::class);
         $form->handleRequest($this->requestStack->getCurrentRequest());
 
-        $view = $this->view($form->getData());
+        if (false === $form->isValid()) {
+            $view = $this->view(HttpValidationErrorModel::build($form), 400);
+            return $this->handleView($view);
+        }
+
+        $movie = $form->getData();
+
+        if (!$movie instanceof Movie) {
+            throw new \RuntimeException('unexpected state - $movie should always be a Movie');
+        }
+
+        $this->doctrine->getManager()->persist($movie);
+        $this->doctrine->getManager()->flush();
+
+        $view = $this->view($movie);
         $view->setContext((new Context())->addGroup('movie'));
         return $this->handleView($view);
     }

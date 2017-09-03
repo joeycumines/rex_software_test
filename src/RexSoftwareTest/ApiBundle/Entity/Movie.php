@@ -16,6 +16,8 @@ use JMS\Serializer\Annotation as JMS;
 class Movie
 {
     const INITIAL_RATING = 6.0;
+    const MAX_RATING = 10.0;
+    const MIN_RATING = 0.0;
 
     /**
      * @ORM\Id
@@ -66,7 +68,8 @@ class Movie
     protected $image;
 
     /**
-     * The movie's current rating / 10, updated with each rating to avoid excessive re-calculation, it starts at 6.
+     * The movie's current rating / 10, updated with each rating to avoid excessive re-calculation, it starts at 6...
+     * or so the original plan was, for simplicity it just gets set, right now.
      *
      * @ORM\Column(type="decimal",precision=4,scale=2,nullable=false)
      *
@@ -90,13 +93,13 @@ class Movie
      * The ids of the roles that are in the movie.
      *
      * @JMS\Type("array<integer>")
-     * @JMS\Accessor(getter="serializeRoleIds")
+     * @JMS\Accessor(getter="getRoleIds")
      * @JMS\SerializedName("role_ids")
      * @JMS\Groups({"movie"})
      *
      * @var int[]
      */
-    protected $roleIds = [];
+    protected $roleIds = null;
 
     public function __construct()
     {
@@ -150,11 +153,11 @@ class Movie
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      *
      * @return Movie
      */
-    public function setDescription(string $description): Movie
+    public function setDescription($description): Movie
     {
         $this->description = $description;
         return $this;
@@ -169,11 +172,11 @@ class Movie
     }
 
     /**
-     * @param string $image
+     * @param string|null $image
      *
      * @return Movie
      */
-    public function setImage(string $image): Movie
+    public function setImage($image): Movie
     {
         $this->image = $image;
         return $this;
@@ -188,13 +191,37 @@ class Movie
     }
 
     /**
+     * Validate a rating value, and return it as a float.
+     *
+     * @param mixed $rating
+     *
+     * @return float
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function validateRating($rating): float
+    {
+        if (false === is_numeric($rating)) {
+            throw new \InvalidArgumentException(sprintf('Non-numeric rating "%s".', $rating));
+        }
+        $rating = (float)$rating;
+        if ($rating < self::MIN_RATING || $rating > self::MAX_RATING) {
+            throw new \InvalidArgumentException(sprintf('Rating %.2F is out of bounds.', $rating));
+        }
+        return $rating;
+    }
+
+    /**
      * @param float $rating
      *
      * @return Movie
      */
-    public function setRating(float $rating): Movie
+    public function setRating($rating): Movie
     {
-        $this->rating = $rating;
+        try {
+            $this->rating = self::validateRating($rating);
+        } catch (\InvalidArgumentException $e) {
+        }
         return $this;
     }
 
@@ -207,47 +234,50 @@ class Movie
     }
 
     /**
+     * Set the roles, which also clears any explicitly set role ids.
+     *
      * @param ArrayCollection $roles
      *
      * @return Movie
      */
-    public function setRoles(ArrayCollection $roles)
+    public function setRoles(ArrayCollection $roles): Movie
     {
         $this->roles = $roles;
+        $this->roleIds = null;
         return $this;
     }
 
     /**
+     * Get the role ids, which are generated from the actual roles collection, if the role ids have not been
+     * explicitly set to an array.
+     *
      * @return int[]
      */
-    public function getRoleIds(): array
+    public function getRoleIds()
     {
-        return $this->roleIds;
+        if (true === is_array($this->roleIds)) {
+            return $this->roleIds;
+        }
+        $roleIds = [];
+        if (null !== $this->roles) {
+            foreach ($this->roles as $role) {
+                if (!$role instanceof Role || false === is_int($role->getId())) {
+                    continue;
+                }
+                $roleIds[] = $role->getId();
+            }
+        }
+        return $roleIds;
     }
 
     /**
-     * @param int[] $roleIds
+     * @param int[]|null $roleIds
      *
      * @return Movie
      */
-    public function setRoleIds(array $roleIds): Movie
+    public function setRoleIds($roleIds): Movie
     {
         $this->roleIds = $roleIds;
         return $this;
-    }
-
-    /**
-     * @return int[]
-     */
-    public function serializeRoleIds(): array
-    {
-        $roles = [];
-        foreach ($this->roles as $role) {
-            if (!$role instanceof Role || false === is_int($role->getId())) {
-                continue;
-            }
-            $roles[] = $role->getId();
-        }
-        return $roles;
     }
 }

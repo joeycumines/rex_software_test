@@ -101,13 +101,13 @@ class Actor
      * The ids of the roles that this actor has played.
      *
      * @JMS\Type("array<integer>")
-     * @JMS\Accessor(getter="serializeRoleIds")
+     * @JMS\Accessor(getter="getRoleIds")
      * @JMS\SerializedName("role_ids")
      * @JMS\Groups({"actor"})
      *
      * @var int[]
      */
-    protected $roleIds = [];
+    protected $roleIds = null;
 
     public function __construct()
     {
@@ -146,13 +146,28 @@ class Actor
      *
      * @return Actor
      */
-    public function setBirthDate($birthDate)
+    public function setBirthDate($birthDate): Actor
     {
         if ($birthDate instanceof \DateTimeInterface && new \DateTime() < $birthDate) {
             throw new \InvalidArgumentException('$birthDate must not be a future date');
         }
         $this->birthDate = $birthDate;
         return $this;
+    }
+
+    /**
+     * Convert the actor's birth date to an age value (years).
+     *
+     * @return int|null
+     */
+    public function getAge()
+    {
+        $birthDate = $this->birthDate;
+        if (!$birthDate instanceof \DateTimeInterface) {
+            return null;
+        }
+        $birthDate = (new \DateTime())->setTimestamp($birthDate->getTimestamp())->setTime(0, 0);
+        return $birthDate->diff(new \DateTime())->y;
     }
 
     /**
@@ -168,7 +183,7 @@ class Actor
      *
      * @return Actor
      */
-    public function setBio($bio)
+    public function setBio($bio): Actor
     {
         $this->bio = $bio;
         return $this;
@@ -187,7 +202,7 @@ class Actor
      *
      * @return Actor
      */
-    public function setImage($image)
+    public function setImage($image): Actor
     {
         $this->image = $image;
         return $this;
@@ -221,6 +236,8 @@ class Actor
     }
 
     /**
+     * Set the roles, which also clears any explicitly set role ids.
+     *
      * @param ArrayCollection $roles
      *
      * @return Actor
@@ -228,57 +245,41 @@ class Actor
     public function setRoles(ArrayCollection $roles): Actor
     {
         $this->roles = $roles;
+        $this->roleIds = null;
         return $this;
     }
 
     /**
-     * Convert the actor's birth date to an age value (years).
+     * Get the role ids, which are generated from the actual roles collection, if the role ids have not been
+     * explicitly set to an array.
      *
-     * @return int|null
-     */
-    public function getAge()
-    {
-        $birthDate = $this->birthDate;
-        if (!$birthDate instanceof \DateTimeInterface) {
-            return null;
-        }
-        $birthDate = (new \DateTime())->setTimestamp($birthDate->getTimestamp())->setTime(0, 0);
-        return $birthDate->diff(new \DateTime())->y;
-    }
-
-    /**
      * @return int[]
      */
-    public function getRoleIds(): array
+    public function getRoleIds()
     {
-        return $this->roleIds;
+        if (true === is_array($this->roleIds)) {
+            return $this->roleIds;
+        }
+        $roleIds = [];
+        if (null !== $this->roles) {
+            foreach ($this->roles as $role) {
+                if (!$role instanceof Role || false === is_int($role->getId())) {
+                    continue;
+                }
+                $roleIds[] = $role->getId();
+            }
+        }
+        return $roleIds;
     }
 
     /**
-     * @param int[] $roleIds
+     * @param int[]|null $roleIds
      *
      * @return Actor
      */
-    public function setRoleIds(array $roleIds): Actor
+    public function setRoleIds($roleIds): Actor
     {
         $this->roleIds = $roleIds;
         return $this;
-    }
-
-    /**
-     * Converts the array collection of roles into an array of int ids.
-     *
-     * @return int[]
-     */
-    public function serializeRoleIds(): array
-    {
-        $roles = [];
-        foreach ($this->roles as $role) {
-            if (!$role instanceof Role || false === is_int($role->getId())) {
-                continue;
-            }
-            $roles[] = $role->getId();
-        }
-        return $roles;
     }
 }

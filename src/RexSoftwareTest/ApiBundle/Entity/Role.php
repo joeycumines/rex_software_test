@@ -30,7 +30,7 @@ class Role
      * The movie of which this role is for.
      *
      * @ORM\ManyToOne(targetEntity="Movie",inversedBy="roles")
-     * @ORM\JoinColumn(name="movie_id",referencedColumnName="id",nullable=false)
+     * @ORM\JoinColumn(name="movie_id",referencedColumnName="id",nullable=true)
      *
      * @var Movie
      */
@@ -52,7 +52,7 @@ class Role
      * The actor who played this role.
      *
      * @ORM\ManyToOne(targetEntity="Actor",inversedBy="roles")
-     * @ORM\JoinColumn(name="actor_id",referencedColumnName="id",nullable=false)
+     * @ORM\JoinColumn(name="actor_id",referencedColumnName="id",nullable=true)
      *
      * @var Actor
      */
@@ -83,7 +83,7 @@ class Role
     protected $name;
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMovieId()
     {
@@ -94,7 +94,7 @@ class Role
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getActorId()
     {
@@ -124,7 +124,7 @@ class Role
     }
 
     /**
-     * @return Movie
+     * @return Movie|null
      */
     public function getMovie()
     {
@@ -132,18 +132,18 @@ class Role
     }
 
     /**
-     * @param Movie $movie
+     * @param Movie|null $movie
      *
      * @return Role
      */
-    public function setMovie(Movie $movie): Role
+    public function setMovie($movie): Role
     {
         $this->movie = $movie;
         return $this;
     }
 
     /**
-     * @return Actor
+     * @return Actor|null
      */
     public function getActor()
     {
@@ -151,11 +151,11 @@ class Role
     }
 
     /**
-     * @param Actor $actor
+     * @param Actor|null $actor
      *
      * @return Role
      */
-    public function setActor(Actor $actor): Role
+    public function setActor($actor): Role
     {
         $this->actor = $actor;
         return $this;

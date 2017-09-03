@@ -85,6 +85,44 @@
             "apiKey": []
           }
         ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "The movie with the id provided is returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
+            }
+          },
+          "400": {
+            "description": "A bad request was made, any errors will be returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpValidationErrorModel"
+            }
+          }
+        },
+        "description": "",
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Create a new movie, and get the (now fully initialized) movie, with it's new id.",
+        "operationId": "post_api-movies",
+        "parameters": [
+          {
+            "in": "body",
+            "description": "",
+            "name": "rexsoftwaretest_apibundle_movie",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Form.MovieType"
+            }
+          }
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
       }
     },
     "/api/movies/{movie}": {
@@ -174,7 +212,7 @@
         },
         "rating": {
           "type": "number",
-          "description": "The movie's current rating / 10, updated with each rating to avoid excessive re-calculation, it starts at 6.",
+          "description": "The movie's current rating / 10, updated with each rating to avoid excessive re-calculation, it starts at 6...\nor so the original plan was, for simplicity it just gets set, right now.",
           "format": "float"
         },
         "role_ids": {
@@ -193,6 +231,39 @@
         "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
       }
     },
+    "RexSoftwareTest.ApiBundle.Form.MovieType": {
+      "description": "object (MovieType)",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "string"
+        },
+        "image": {
+          "type": "string",
+          "description": "string"
+        },
+        "rating": {
+          "type": "number",
+          "description": "float",
+          "format": "float"
+        },
+        "role_ids": {
+          "type": "array",
+          "description": "array of integers",
+          "items": {
+            "type": "integer"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
     "RexSoftwareTest.ApiBundle.Model.HttpErrorDetailsModel": {
       "description": "The error details.",
       "properties": {
@@ -204,6 +275,42 @@
         "message": {
           "type": "string",
           "description": "An error message."
+        }
+      },
+      "type": "object"
+    },
+    "RexSoftwareTest.ApiBundle.Model.FormValidationErrorModel": {
+      "description": "The form and errors that caused this response.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "string"
+        },
+        "errors": {
+          "type": "array",
+          "description": "array of strings",
+          "items": {
+            "type": "string"
+          }
+        },
+        "children": {
+          "type": "array",
+          "description": "Any child forms that also contain errors.",
+          "items": {
+            "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.FormValidationErrorModel"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "RexSoftwareTest.ApiBundle.Model.HttpValidationErrorModel": {
+      "description": "",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpErrorDetailsModel"
+        },
+        "form": {
+          "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.FormValidationErrorModel"
         }
       },
       "type": "object"
