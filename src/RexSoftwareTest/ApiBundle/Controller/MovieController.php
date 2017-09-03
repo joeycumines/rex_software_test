@@ -67,7 +67,7 @@ class MovieController extends FOSRestController
      *     resource=true,
      *     statusCodes={
      *         "200"="The movie with the id provided is returned.",
-     *         "404"="The movie was not found, and error message will be returned."
+     *         "404"="The movie was not found, an error message will be returned."
      *     },
      *     responseMap={
      *         "200"={"class"="RexSoftwareTest\ApiBundle\Entity\Movie", "groups"={"movie"}},
@@ -96,7 +96,7 @@ class MovieController extends FOSRestController
      *     resource=true,
      *     input="RexSoftwareTest\ApiBundle\Form\MovieType",
      *     statusCodes={
-     *         "200"="The movie with the id provided is returned.",
+     *         "200"="A new movie was created and returned.",
      *         "400"="A bad request was made, any errors will be returned."
      *     },
      *     responseMap={
@@ -112,7 +112,11 @@ class MovieController extends FOSRestController
      */
     public function postMovieAction()
     {
-        $form = $this->jsonFormFactory->createForm(MovieType::class);
+        $form = $this->jsonFormFactory->createForm(
+            MovieType::class,
+            null,
+            ['method' => 'POST']
+        );
         $form->handleRequest($this->requestStack->getCurrentRequest());
 
         if (false === $form->isValid()) {
@@ -129,6 +133,141 @@ class MovieController extends FOSRestController
         $this->doctrine->getManager()->persist($movie);
         $this->doctrine->getManager()->flush();
 
+        $view = $this->view($movie);
+        $view->setContext((new Context())->addGroup('movie'));
+        return $this->handleView($view);
+    }
+
+    /**
+     * Update an existing movie, overwriting all values.
+     *
+     * @ApiDoc(
+     *     resource=true,
+     *     input="RexSoftwareTest\ApiBundle\Form\MovieType",
+     *     statusCodes={
+     *         "200"="The movie with the given id is returned after being updated with the changes.",
+     *         "400"="A bad request was made, any errors will be returned.",
+     *         "404"="The movie was not found, an error message will be returned."
+     *     },
+     *     responseMap={
+     *         "200"={"class"="RexSoftwareTest\ApiBundle\Entity\Movie", "groups"={"movie"}},
+     *         "400"="RexSoftwareTest\ApiBundle\Model\HttpValidationErrorModel",
+     *         "404"="RexSoftwareTest\ApiBundle\Model\HttpErrorResponseModel"
+     *     },
+     *     section="Movie"
+     * )
+     *
+     * @Rest\Put("/{movie}")
+     *
+     * @param Movie $movie
+     *
+     * @return Response
+     */
+    public function putMovieAction(Movie $movie)
+    {
+        $form = $this->jsonFormFactory->createForm(
+            MovieType::class,
+            $movie,
+            ['method' => 'PUT']
+        );
+        $form->handleRequest($this->requestStack->getCurrentRequest());
+
+        if (false === $form->isValid()) {
+            $view = $this->view(HttpValidationErrorModel::build($form), 400);
+            return $this->handleView($view);
+        }
+
+        $movie = $form->getData();
+
+        if (!$movie instanceof Movie) {
+            throw new \RuntimeException('unexpected state - $movie should always be a Movie');
+        }
+
+        $this->doctrine->getManager()->flush();
+
+        $view = $this->view($movie);
+        $view->setContext((new Context())->addGroup('movie'));
+        return $this->handleView($view);
+    }
+
+    /**
+     * Update an existing movie, only updating the provided values.
+     *
+     * @ApiDoc(
+     *     resource=true,
+     *     input="RexSoftwareTest\ApiBundle\Form\MovieType",
+     *     statusCodes={
+     *         "200"="The movie with the given id is returned after being updated with the changes.",
+     *         "400"="A bad request was made, any errors will be returned.",
+     *         "404"="The movie was not found, an error message will be returned."
+     *     },
+     *     responseMap={
+     *         "200"={"class"="RexSoftwareTest\ApiBundle\Entity\Movie", "groups"={"movie"}},
+     *         "400"="RexSoftwareTest\ApiBundle\Model\HttpValidationErrorModel",
+     *         "404"="RexSoftwareTest\ApiBundle\Model\HttpErrorResponseModel"
+     *     },
+     *     section="Movie"
+     * )
+     *
+     * @Rest\Patch("/{movie}")
+     *
+     * @param Movie $movie
+     *
+     * @return Response
+     */
+    public function patchMovieAction(Movie $movie)
+    {
+        $form = $this->jsonFormFactory->createForm(
+            MovieType::class,
+            $movie,
+            ['method' => 'PATCH']
+        );
+        $form->handleRequest($this->requestStack->getCurrentRequest());
+
+        if (false === $form->isValid()) {
+            $view = $this->view(HttpValidationErrorModel::build($form), 400);
+            return $this->handleView($view);
+        }
+
+        $movie = $form->getData();
+
+        if (!$movie instanceof Movie) {
+            throw new \RuntimeException('unexpected state - $movie should always be a Movie');
+        }
+
+        $this->doctrine->getManager()->flush();
+
+        $view = $this->view($movie);
+        $view->setContext((new Context())->addGroup('movie'));
+        return $this->handleView($view);
+    }
+
+    /**
+     * Delete a given movie, and return it's last value.
+     *
+     * @ApiDoc(
+     *     resource=true,
+     *     statusCodes={
+     *         "200"="The movie was deleted, and it's last value returned.",
+     *         "404"="The movie was not found, an error message will be returned."
+     *     },
+     *     responseMap={
+     *         "200"={"class"="RexSoftwareTest\ApiBundle\Entity\Movie", "groups"={"movie"}},
+     *         "404"="RexSoftwareTest\ApiBundle\Model\HttpErrorResponseModel"
+     *     },
+     *     section="Movie"
+     * )
+     *
+     * @Rest\Delete("/{movie}")
+     *
+     * @param Movie $movie
+     *
+     * @return Response
+     */
+    public function deleteMovieAction(Movie $movie)
+    {
+        $this->doctrine->getManager()->remove($movie);
+        $this->doctrine->getManager()->flush();
         $view = $this->view($movie);
         $view->setContext((new Context())->addGroup('movie'));
         return $this->handleView($view);
