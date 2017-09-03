@@ -6,6 +6,7 @@ namespace RexSoftwareTest\ApiBundle\Form;
 use Doctrine\Common\Collections\ArrayCollection;
 use RexSoftwareTest\ApiBundle\Entity\Movie;
 use RexSoftwareTest\ApiBundle\Entity\Role;
+use RexSoftwareTest\ApiBundle\Form\EventListener\CollectionChangeSubscriber;
 use RexSoftwareTest\ApiBundle\Repository\RoleRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -53,16 +54,10 @@ class MovieType extends AbstractType
                 'allow_delete' => true,
             ]);
 
-        // validate the input and hydrate the roles
+        // validate the input
         $builder->addEventListener(
             FormEvents::SUBMIT,
             function (FormEvent $event) {
-                $movie = $event->getData();
-
-                if (!$movie instanceof Movie) {
-                    throw new \RuntimeException('unexpected state - $movie should always be a Movie');
-                }
-
                 if (true === $event->getForm()->has('rating')) {
                     $localForm = $event->getForm()->get('rating');
                     if (null !== $localForm->getData()) {
@@ -73,85 +68,25 @@ class MovieType extends AbstractType
                         }
                     }
                 }
-
-                $newRoleList = $this->roleRepository->findBy(['id' => $movie->getRoleIds()]);
-                $oldRoleList = $movie->getRoles();
-
-                $missingRoleIds = $movie->getRoleIds();
-                foreach ($newRoleList as $role) {
-                    /** @var Role $role */
-                    $ind = array_search($role->getId(), $missingRoleIds, true);
-                    if (false === $ind) {
-                        continue;
-                    }
-                    unset($missingRoleIds[$ind]);
-                }
-                $missingRoleIds = array_values($missingRoleIds);
-
-                if (0 !== count($missingRoleIds)) {
-                    $event->getForm()->addError(new FormError(sprintf(
-                        'One or more role ids could not be found: %s.',
-                        json_encode($missingRoleIds)
-                    )));
-                }
-
-                // generate an array index for each role changed in the format [id => list($new, $old)]
-                $roleMap = [];
-                foreach ($newRoleList as $role) {
-                    if (!$role instanceof Role) {
-                        continue;
-                    }
-                    if (false === array_key_exists($role->getId(), $roleMap)) {
-                        $roleMap[$role->getId()] = [null, null];
-                    }
-                    list($newRole, $oldRole) = $roleMap[$role->getId()];
-                    $newRole = $role;
-                    $roleMap[$role->getId()] = [$newRole, $oldRole];
-                }
-                foreach ($oldRoleList as $role) {
-                    if (!$role instanceof Role) {
-                        continue;
-                    }
-                    if (false === array_key_exists($role->getId(), $roleMap)) {
-                        $roleMap[$role->getId()] = [null, null];
-                    }
-                    list($newRole, $oldRole) = $roleMap[$role->getId()];
-                    $oldRole = $role;
-                    $roleMap[$role->getId()] = [$newRole, $oldRole];
-                }
-
-                // handle setting the property on the roles which actually links them
-                foreach ($roleMap as $rolePair) {
-                    list($newRole, $oldRole) = $rolePair;
-                    /** @var Role $newRole */
-                    /** @var Role $oldRole */
-                    if (null !== $newRole && null !== $oldRole) {
-                        // no change
-                        continue;
-                    }
-                    if (null === $newRole) {
-                        // deleted
-                        $oldRole->setMovie(null);
-                        continue;
-                    }
-                    // and the tricky case, added
-                    if ($newRole->getMovie() instanceof Movie) {
-                        // if the role is part of another movie it cannot be added
-                        $event->getForm()->addError(new FormError(sprintf(
-                            'Role id %d could not be added, as it is already added to Movie id %d "%s".',
-                            $newRole->getId(),
-                            $newRole->getMovie()->getId(),
-                            $newRole->getMovie()->getName()
-                        )));
-                        continue;
-                    }
-                    $newRole->setMovie($movie);
-                }
-
-                $movie->setRoles(new ArrayCollection($newRoleList));
-                $movie->setRoleIds(null);
             }
         );
+
+        // hydrate the roles
+        $builder->addEventSubscriber(new CollectionChangeSubscriber(
+            $this->roleRepository,
+            'id',
+            'getId',
+            Role::class,
+            'getId',
+            Movie::class,
+            'getRoleIds',
+            'setRoleIds',
+            'getRoles',
+            'setRoles',
+            'getMovie',
+            'setMovie',
+            'role_ids'
+        ));
     }
 
     /**
