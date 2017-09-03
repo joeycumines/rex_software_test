@@ -64,7 +64,7 @@
         ]
       }
     },
-    "/api/movie": {
+    "/api/movies": {
       "get": {
         "responses": {
           "200": {
@@ -79,7 +79,44 @@
           "Movie"
         ],
         "summary": "Get all movies that optionally meet certain conditions.",
-        "operationId": "get_api-movie",
+        "operationId": "get_api-movies",
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/movies/{movie}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "The movie with the id provided is returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
+            }
+          },
+          "404": {
+            "description": "The movie was not found, and error message will be returned.",
+            "schema": {
+              "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpErrorResponseModel"
+            }
+          }
+        },
+        "description": "",
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Get a movie by id.",
+        "operationId": "get_api-movies-movie",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "movie",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "security": [
           {
             "apiKey": []
@@ -155,6 +192,30 @@
       "items": {
         "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Entity.Movie"
       }
+    },
+    "RexSoftwareTest.ApiBundle.Model.HttpErrorDetailsModel": {
+      "description": "The error details.",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "The http code.",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string",
+          "description": "An error message."
+        }
+      },
+      "type": "object"
+    },
+    "RexSoftwareTest.ApiBundle.Model.HttpErrorResponseModel": {
+      "description": "",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/RexSoftwareTest.ApiBundle.Model.HttpErrorDetailsModel"
+        }
+      },
+      "type": "object"
     }
   },
   "securityDefinitions": {
